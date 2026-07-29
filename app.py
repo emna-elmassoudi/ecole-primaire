@@ -55,6 +55,10 @@ GALLERY_LIGHTBOX = {
 }
 app.permanent_session_lifetime = timedelta(minutes=30)
 login_manager = LoginManager(app)
+
+@app.before_request
+def cleanup_session():
+    db.session.rollback()
 login_manager.login_view = 'login'
 login_manager.login_message = 'Veuillez vous connecter pour accéder à cette page.'
 

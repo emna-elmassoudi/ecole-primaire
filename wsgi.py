@@ -1,6 +1,7 @@
 import os
 import sys
 import traceback
+from sqlalchemy.exc import IntegrityError
 
 try:
     from app import app, db
@@ -23,7 +24,12 @@ with app.app_context():
             admin.set_password('admin123')
             db.session.add(admin)
             db.session.commit()
-        print("Database initialized successfully")
+            print("Admin account created")
+        else:
+            print("Admin already exists")
+    except IntegrityError:
+        db.session.rollback()
+        print("Admin creation skipped (already exists)")
     except Exception as e:
         print("DB INIT ERROR:", e, file=sys.stderr)
         traceback.print_exc()
