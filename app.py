@@ -162,25 +162,40 @@ def date_fr_filter(dt, format='%d %B %Y'):
 
 @app.context_processor
 def inject_globals():
-    unread_count = 0
-    latest_notifications = []
-    if current_user.is_authenticated:
-        unread_count = Notification.query.filter_by(user_id=current_user.id, read=False).count()
-        latest_notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).limit(5).all()
-    latest_public = Announcement.query.filter_by(published=True).order_by(Announcement.created_at.desc()).first()
-    home_images = {}
-    for k in HOME_IMAGES:
-        v = get_setting(k, '')
-        home_images[k] = v if v and (v.startswith('/') or v.startswith('http')) else HOME_IMAGE_DEFAULTS.get(k, '')
-    return {
-        'site_name': get_setting('site_name', 'École Primaire'),
-        'current_year': datetime.utcnow().year,
-        'unread_count': unread_count,
-        'latest_notifications': latest_notifications,
-        'latest_public_announcement': latest_public,
-        'home_images': home_images,
-        'get_setting': get_setting
-    }
+    try:
+        unread_count = 0
+        latest_notifications = []
+        if current_user.is_authenticated:
+            unread_count = Notification.query.filter_by(user_id=current_user.id, read=False).count()
+            latest_notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).limit(5).all()
+        latest_public = Announcement.query.filter_by(published=True).order_by(Announcement.created_at.desc()).first()
+        home_images = {}
+        for k in HOME_IMAGES:
+            v = get_setting(k, '')
+            home_images[k] = v if v and (v.startswith('/') or v.startswith('http')) else HOME_IMAGE_DEFAULTS.get(k, '')
+        return {
+            'site_name': get_setting('site_name', 'École Primaire'),
+            'current_year': datetime.utcnow().year,
+            'unread_count': unread_count,
+            'latest_notifications': latest_notifications,
+            'latest_public_announcement': latest_public,
+            'home_images': home_images,
+            'get_setting': get_setting
+        }
+    except Exception as e:
+        app.logger.error(f'Context processor error: {e}')
+        import traceback
+        app.logger.error(traceback.format_exc())
+        db.session.rollback()
+        return {
+            'site_name': 'École Primaire',
+            'current_year': datetime.utcnow().year,
+            'unread_count': 0,
+            'latest_notifications': [],
+            'latest_public_announcement': None,
+            'home_images': HOME_IMAGE_DEFAULTS,
+            'get_setting': get_setting
+        }
 
 @app.route('/health')
 def health():
@@ -726,10 +741,10 @@ def not_found(e):
 
 @app.errorhandler(500)
 def server_error(e):
-    app.logger.error(f'500 error: {e}')
     import traceback
+    app.logger.error(f'500 error: {e}')
     app.logger.error(traceback.format_exc())
-    return render_template('500.html'), 500
+    return '<h1>Erreur Interne</h1><p>Veuillez réessayer.</p>', 500
 
 @app.route('/admin/messages')
 @login_required
