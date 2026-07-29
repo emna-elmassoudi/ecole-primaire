@@ -137,7 +137,7 @@ def notify_subscribers(message, link=None, type='info', subject=None):
 
 def get_setting(key, default=''):
     setting = SiteSetting.query.filter_by(key=key).first()
-    return setting.value if setting else default
+    return setting.value if setting and setting.value is not None else default
 
 MONTHS_FR = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
 
@@ -167,7 +167,7 @@ def inject_globals():
     home_images = {}
     for k in HOME_IMAGES:
         v = get_setting(k, '')
-        home_images[k] = v if v.startswith('/') or v.startswith('http') else HOME_IMAGE_DEFAULTS.get(k, '')
+        home_images[k] = v if v and (v.startswith('/') or v.startswith('http')) else HOME_IMAGE_DEFAULTS.get(k, '')
     return {
         'site_name': get_setting('site_name', 'École Primaire'),
         'current_year': datetime.utcnow().year,
@@ -177,6 +177,10 @@ def inject_globals():
         'home_images': home_images,
         'get_setting': get_setting
     }
+
+@app.route('/health')
+def health():
+    return 'OK'
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -718,6 +722,9 @@ def not_found(e):
 
 @app.errorhandler(500)
 def server_error(e):
+    app.logger.error(f'500 error: {e}')
+    import traceback
+    app.logger.error(traceback.format_exc())
     return render_template('500.html'), 500
 
 @app.route('/admin/messages')
