@@ -1,6 +1,14 @@
 import os
-from app import app, db
-from models import User
+import sys
+import traceback
+
+try:
+    from app import app, db
+    from models import User
+except Exception as e:
+    print("IMPORT ERROR:", e, file=sys.stderr)
+    traceback.print_exc()
+    raise
 
 os.makedirs(os.path.join(app.instance_path), exist_ok=True)
 
@@ -8,9 +16,15 @@ upload_dir = os.path.join(app.root_path, 'static', 'uploads', 'home')
 os.makedirs(upload_dir, exist_ok=True)
 
 with app.app_context():
-    db.create_all()
-    if not User.query.filter_by(role='admin').first():
-        admin = User(username='directeur', email='directeur@ecole-primaire.fr', role='admin')
-        admin.set_password('admin123')
-        db.session.add(admin)
-        db.session.commit()
+    try:
+        db.create_all()
+        if not User.query.filter_by(role='admin').first():
+            admin = User(username='directeur', email='directeur@ecole-primaire.fr', role='admin')
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+        print("Database initialized successfully")
+    except Exception as e:
+        print("DB INIT ERROR:", e, file=sys.stderr)
+        traceback.print_exc()
+        raise
