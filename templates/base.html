@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_name }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Site officiel de l'école primaire. Retrouvez toutes les informations, actualités et événements scolaires.{% endblock %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-welcome">
+                <i class="fas fa-star"></i>
+                <span>Bienvenue sur le site officiel de {{ site_name }}</span>
+            </div>
+            <div class="top-bar-info">
+                <span><i class="fas fa-envelope"></i> {{ get_setting('contact_email', 'contact@ecole-primaire.fr') }}</span>
+                <span><i class="fas fa-phone"></i> {{ get_setting('contact_phone', '01 23 45 67 89') }}</span>
+                <span><i class="fas fa-clock"></i> {{ get_setting('school_hours', '8h30 - 16h30') }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar-wrapper" id="navbarWrapper">
+        <nav class="navbar">
+            <div class="container">
+                <a href="{{ url_for('index') }}" class="logo">
+                    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="logo-text">
+                        <span class="logo-title">{{ site_name }}</span>
+                        <span class="logo-subtitle">Établissement d'excellence</span>
+                    </div>
+                </a>
+                <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-links">
+                        <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Accueil</a></li>
+                        <li><a href="{{ url_for('announcements') }}" class="{% if request.endpoint in ['announcements', 'announcement_detail'] %}active{% endif %}">Actualités</a></li>
+                        <li><a href="{{ url_for('events') }}" class="{% if request.endpoint in ['events', 'event_detail'] %}active{% endif %}">Événements</a></li>
+                        <li><a href="{{ url_for('circulars') }}" class="{% if request.endpoint == 'circulars' %}active{% endif %}">Documents</a></li>
+                        <li><a href="{{ url_for('gallery') }}" class="{% if request.endpoint == 'gallery' %}active{% endif %}">Galerie</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="{% if request.endpoint == 'contact' %}active{% endif %}">Contact</a></li>
+                    </ul>
+                    <div class="nav-actions">
+                        {% if current_user.is_authenticated %}
+                            <div class="notif-dropdown-wrapper">
+                                <button class="nav-icon-link notif-toggle" id="notifToggle" title="Notifications">
+                                    <i class="fas fa-bell"></i>
+                                    {% if unread_count > 0 %}
+                                        <span class="badge">{{ unread_count }}</span>
+                                    {% endif %}
+                                </button>
+                                <div class="notif-dropdown" id="notifDropdown">
+                                    <div class="notif-dropdown-header">
+                                        <span>Notifications</span>
+                                        <a href="{{ url_for('notifications') }}" class="notif-view-all">Tout voir</a>
+                                    </div>
+                                    {% if latest_notifications %}
+                                        {% for notif in latest_notifications %}
+                                            <a href="{{ notif.link or url_for('notifications') }}" class="notif-dropdown-item {% if not notif.read %}unread{% endif %}">
+                                                <span class="notif-dropdown-dot"></span>
+                                                <span class="notif-dropdown-text">{{ notif.message }}</span>
+                                                <span class="notif-dropdown-time">{{ notif.created_at.strftime('%d/%m') }}</span>
+                                            </a>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="notif-dropdown-empty">Aucune notification</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <a href="{{ url_for('settings') }}" class="nav-icon-link" title="Mon compte">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            {% if current_user.role == 'admin' %}
+                                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-sm"><i class="fas fa-shield-alt"></i> Direction</a>
+                            {% endif %}
+                            <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm">Déconnexion</a>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('newsletter_subscribe') }}" class="newsletter-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="email" name="email" placeholder="Votre email" required class="newsletter-input">
+                                <button type="submit" class="btn-newsletter-submit"><i class="fas fa-bell"></i> Recevoir les alertes</button>
+                            </form>
+                            <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm"><i class="fas fa-user-plus"></i> S'inscrire</a>
+                            <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">Connexion</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    {% block hero %}{% endblock %}
+
+    <main class="main-content">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">
+                                <span>{{ message }}</span>
+                                <button class="flash-close" onclick="this.parentElement.remove();">&times;</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo" style="margin-bottom: 16px;">
+                        <div class="logo-icon" style="width: 40px; height: 40px; font-size: 1rem;">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="logo-text">
+                            <span class="logo-title" style="color: var(--white);">{{ site_name }}</span>
+                        </div>
+                    </div>
+                    <p>Un établissement dédié à l'épanouissement et à la réussite de chaque enfant, dans un cadre bienveillant et stimulant.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Liens rapides</h4>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                        <li><a href="{{ url_for('announcements') }}">Actualités</a></li>
+                        <li><a href="{{ url_for('events') }}">Événements</a></li>
+                        <li><a href="{{ url_for('circulars') }}">Documents</a></li>
+                        <li><a href="{{ url_for('gallery') }}">Galerie</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Coordonnées</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-map-marker-alt"></i> {{ get_setting('contact_address', '123 Rue de l\'École, 75000 Paris') }}</li>
+                        <li><i class="fas fa-phone"></i> {{ get_setting('contact_phone', '01 23 45 67 89') }}</li>
+                        <li><i class="fas fa-envelope"></i> {{ get_setting('contact_email', 'contact@ecole-primaire.fr') }}</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Suivez-nous</h4>
+                    <p>Restez connecté avec l'école sur les réseaux sociaux.</p>
+                    <div class="footer-social" style="margin-top:12px;">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; {{ current_year }} {{ site_name }}. Tous droits réservés.</p>
+                <p><i class="fas fa-heart" style="color: var(--orange);"></i> Fait avec passion pour nos élèves</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

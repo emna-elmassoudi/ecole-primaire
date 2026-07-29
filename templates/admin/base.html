@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration - {{ site_name }}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="admin-body">
+    <div class="admin-layout">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="{{ url_for('admin_dashboard') }}" class="sidebar-logo">
+                    <i class="fas fa-school" style="color: var(--rose);"></i>
+                    <span>Administration</span>
+                </a>
+                <button class="sidebar-close" id="sidebarClose">&times;</button>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Gestion</div>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-simple"></i>
+                    <span>Tableau de bord</span>
+                </a>
+                <a href="{{ url_for('admin_announcements') }}" class="nav-item {% if request.endpoint in ['admin_announcements', 'admin_announcement_new', 'admin_announcement_edit'] %}active{% endif %}">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Annonces</span>
+                </a>
+                <a href="{{ url_for('admin_events') }}" class="nav-item {% if request.endpoint in ['admin_events', 'admin_event_new', 'admin_event_edit'] %}active{% endif %}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Événements</span>
+                </a>
+                <a href="{{ url_for('admin_circulars') }}" class="nav-item {% if request.endpoint in ['admin_circulars', 'admin_circular_new', 'admin_circular_edit'] %}active{% endif %}">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Circulaires</span>
+                </a>
+                <a href="{{ url_for('admin_photos') }}" class="nav-item {% if request.endpoint == 'admin_photos' %}active{% endif %}">
+                    <i class="fas fa-images"></i>
+                    <span>Photos</span>
+                </a>
+                <a href="{{ url_for('admin_users') }}" class="nav-item {% if request.endpoint == 'admin_users' %}active{% endif %}">
+                    <i class="fas fa-users"></i>
+                    <span>Utilisateurs</span>
+                </a>
+                <a href="{{ url_for('admin_reviews') }}" class="nav-item {% if request.endpoint == 'admin_reviews' %}active{% endif %}">
+                    <i class="fas fa-star"></i>
+                    <span>Avis parents</span>
+                </a>
+                <a href="{{ url_for('admin_messages') }}" class="nav-item {% if request.endpoint == 'admin_messages' %}active{% endif %}">
+                    <i class="fas fa-envelope"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="{{ url_for('admin_newsletter') }}" class="nav-item {% if request.endpoint == 'admin_newsletter' %}active{% endif %}">
+                    <i class="fas fa-mail-bulk"></i>
+                    <span>Abonnés newsletter</span>
+                </a>
+                <div class="nav-section-label">Configuration</div>
+                <a href="{{ url_for('admin_settings') }}" class="nav-item {% if request.endpoint == 'admin_settings' %}active{% endif %}">
+                    <i class="fas fa-gear"></i>
+                    <span>Paramètres</span>
+                </a>
+                <div class="nav-section-label">Site</div>
+                <a href="{{ url_for('index') }}" class="nav-item">
+                    <i class="fas fa-eye"></i>
+                    <span>Voir le site</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-item">
+                    <i class="fas fa-right-from-bracket"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </nav>
+        </aside>
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="topbar-title">{% block page_title %}{% endblock %}</div>
+                <div class="topbar-user">
+                    <span>{{ current_user.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline">Déconnexion</a>
+                </div>
+            </header>
+            <div class="admin-content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="flash-message flash-{{ category }}">
+                                    <span>{{ message }}</span>
+                                    <button class="flash-close" onclick="this.parentElement.remove();">&times;</button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

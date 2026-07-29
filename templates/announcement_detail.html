@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ annonce.title }} - {{ site_name }}{% endblock %}
+
+{% block hero %}
+<section class="page-hero page-hero-sm">
+    <div class="container">
+        <a href="{{ url_for('announcements') }}" class="back-link"><i class="fas fa-arrow-left"></i> Retour aux annonces</a>
+        <h1>{{ annonce.title }}</h1>
+        <div class="page-meta">
+            <span><i class="far fa-calendar-alt"></i> {{ annonce.created_at|date_fr('%d %B %Y') }}</span>
+            {% if annonce.updated_at != annonce.created_at %}
+                <span><i class="far fa-edit"></i> Mis à jour le {{ annonce.updated_at.strftime('%d/%m/%Y') }}</span>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<article class="article">
+    {% if annonce.image %}
+        <div class="article-image">
+            <img src="{{ url_for('static', filename=annonce.image) }}" alt="{{ annonce.title }}">
+        </div>
+    {% endif %}
+    <div class="article-content">
+        {{ annonce.content|safe }}
+    </div>
+</article>
+
+{% if other %}
+    <section class="section related-section">
+        <h2>Autres annonces</h2>
+        <div class="cards-grid">
+            {% for item in other %}
+                <a href="{{ url_for('announcement_detail', id=item.id) }}" class="card card-hover">
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span><i class="far fa-calendar-alt"></i> {{ item.created_at.strftime('%d/%m/%Y') }}</span>
+                        </div>
+                        <h3>{{ item.title }}</h3>
+                        <span class="card-link">Lire la suite <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+{% endblock %}

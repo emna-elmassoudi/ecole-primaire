@@ -1,0 +1,68 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ title }} - {{ site_name }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="admin-form-wrapper">
+    <form method="POST" enctype="multipart/form-data" class="admin-form">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="title">{{ form.title.label }}</label>
+            {{ form.title(class="form-control", placeholder="Titre de l'événement") }}
+            {% if form.title.errors %}
+                {% for error in form.title.errors %}
+                    <span class="form-error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="description">{{ form.description.label }}</label>
+            {{ form.description(class="form-control textarea-editor", rows="8", placeholder="Description de l'événement...") }}
+            {% if form.description.errors %}
+                {% for error in form.description.errors %}
+                    <span class="form-error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="date">{{ form.date.label }}</label>
+                {{ form.date(class="form-control", type="date") }}
+                {% if form.date.errors %}
+                    {% for error in form.date.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="time">{{ form.time.label }}</label>
+                {{ form.time(class="form-control", placeholder="ex: 14h30") }}
+            </div>
+            <div class="form-group">
+                <label for="location">{{ form.location.label }}</label>
+                {{ form.location(class="form-control", placeholder="ex: Salle polyvalente") }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="image">{{ form.image.label }}</label>
+            {% if event and event.image %}
+                <div class="current-image">
+                    <img src="{{ url_for('static', filename=event.image) }}" alt="Image actuelle" style="max-width:200px;">
+                </div>
+            {% endif %}
+            {{ form.image(class="form-control") }}
+        </div>
+        <div class="form-group">
+            <label class="checkbox-label">
+                {{ form.published() }} {{ form.published.label }}
+            </label>
+        </div>
+        <div class="form-actions">
+            <a href="{{ url_for('admin_events') }}" class="btn btn-outline">Annuler</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Enregistrer
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

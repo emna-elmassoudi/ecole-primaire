@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Paramètres - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="page-section">
+    <div class="section-header">
+        <h1>Mon compte</h1>
+        <p>Gérez vos préférences de notification.</p>
+    </div>
+    <div class="settings-card">
+        <div class="settings-card-header">
+            <i class="fas fa-user-circle"></i>
+            <div>
+                <h3>{{ current_user.username }}</h3>
+                <p>{{ current_user.email }}</p>
+            </div>
+        </div>
+        <div class="settings-card-body">
+            <div class="setting-item">
+                <div>
+                    <h4>Notifications</h4>
+                    <p>Recevoir des notifications lors des nouvelles publications</p>
+                </div>
+                <div class="setting-status">
+                    {% if current_user.is_subscribed %}
+                        <span class="status-badge active">Activé</span>
+                        <form method="POST" style="display:inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" name="unsubscribe" class="btn btn-sm btn-outline">Désactiver</button>
+                        </form>
+                    {% else %}
+                        <span class="status-badge inactive">Désactivé</span>
+                        <form method="POST" style="display:inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" name="subscribe" class="btn btn-sm btn-primary">Activer</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

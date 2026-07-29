@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} - {{ site_name }}{% endblock %}
+
+{% block hero %}
+<section class="page-hero page-hero-sm">
+    <div class="container">
+        <a href="{{ url_for('events') }}" class="back-link"><i class="fas fa-arrow-left"></i> Retour aux événements</a>
+        <h1>{{ event.title }}</h1>
+        <div class="event-detail-meta">
+            <span><i class="far fa-calendar-alt"></i> {{ event.date|date_fr('%d %B %Y') }}</span>
+            {% if event.time %}<span><i class="far fa-clock"></i> {{ event.time }}</span>{% endif %}
+            {% if event.location %}<span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>{% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<article class="article">
+    {% if event.image %}
+        <div class="article-image">
+            <img src="{{ url_for('static', filename=event.image) }}" alt="{{ event.title }}">
+        </div>
+    {% endif %}
+    <div class="article-content">
+        {{ event.description|safe }}
+    </div>
+</article>
+{% endblock %}

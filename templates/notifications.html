@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Notifications - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="page-section">
+    <div class="section-header">
+        <h1>Mes notifications</h1>
+    </div>
+    {% if notifications.items %}
+        <div class="notifications-list">
+            {% for notif in notifications.items %}
+                <div class="notification-item {% if not notif.read %}unread{% endif %}">
+                    <div class="notification-icon">
+                        {% if notif.type == 'announcement' %}
+                            <i class="fas fa-newspaper"></i>
+                        {% elif notif.type == 'event' %}
+                            <i class="fas fa-calendar-alt"></i>
+                        {% elif notif.type == 'circular' %}
+                            <i class="fas fa-file-alt"></i>
+                        {% elif notif.type == 'photo' %}
+                            <i class="fas fa-image"></i>
+                        {% else %}
+                            <i class="fas fa-bell"></i>
+                        {% endif %}
+                    </div>
+                    <div class="notification-content">
+                        <p>{{ notif.message }}</p>
+                        <span class="notification-time">{{ notif.created_at.strftime('%d/%m/%Y à %H:%M') }}</span>
+                    </div>
+                    {% if notif.link %}
+                        <a href="{{ notif.link }}" class="btn btn-sm btn-outline">Voir</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if notifications.pages > 1 %}
+            <nav class="pagination">
+                {% if notifications.has_prev %}
+                    <a href="{{ url_for('notifications', page=notifications.prev_num) }}" class="page-link">
+                        <i class="fas fa-chevron-left"></i> Précédent
+                    </a>
+                {% endif %}
+                <span class="page-info">Page {{ notifications.page }} sur {{ notifications.pages }}</span>
+                {% if notifications.has_next %}
+                    <a href="{{ url_for('notifications', page=notifications.next_num) }}" class="page-link">
+                        Suivant <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-bell-slash"></i>
+            <h3>Aucune notification</h3>
+            <p>Vous n'avez pas encore de notifications.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

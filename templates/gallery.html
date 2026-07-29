@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Galerie - {{ site_name }}{% endblock %}
+
+{% block hero %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Galerie photos</h1>
+        <p>Découvrez les moments forts de la vie de l'école en images.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+{% if photos.items %}
+    <div class="gallery-grid">
+        {% for photo in photos.items %}
+            <div class="gallery-item" onclick="openLightbox('{{ url_for('static', filename=photo.image_path) }}', '{{ photo.title|escape }}')">
+                <img src="{{ url_for('static', filename=photo.image_path) }}" alt="{{ photo.title or 'Photo' }}">
+                {% if photo.title %}
+                    <div class="gallery-overlay">
+                        <h3>{{ photo.title }}</h3>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    {% if photos.pages > 1 %}
+        <nav class="pagination">
+            {% if photos.has_prev %}
+                <a href="{{ url_for('gallery', page=photos.prev_num) }}" class="page-link">
+                    <i class="fas fa-chevron-left"></i> Précédent
+                </a>
+            {% endif %}
+            <span class="page-info">Page {{ photos.page }} sur {{ photos.pages }}</span>
+            {% if photos.has_next %}
+                <a href="{{ url_for('gallery', page=photos.next_num) }}" class="page-link">
+                    Suivant <i class="fas fa-chevron-right"></i>
+                </a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="empty-state">
+        <i class="fas fa-images"></i>
+        <h3>Aucune photo</h3>
+        <p>Aucune photo n'a été publiée pour le moment.</p>
+    </div>
+{% endif %}
+
+<div id="lightbox" class="lightbox" onclick="if(event.target===this)closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <div class="lightbox-content">
+        <img id="lightboxImage" src="" alt="">
+        <div id="lightboxCaption" class="lightbox-caption"></div>
+    </div>
+</div>
+{% endblock %}

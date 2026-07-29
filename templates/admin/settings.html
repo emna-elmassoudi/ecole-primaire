@@ -1,0 +1,96 @@
+{% extends "admin/base.html" %}
+{% block title %}Paramètres - {{ site_name }}{% endblock %}
+{% block page_title %}Paramètres du site{% endblock %}
+
+{% block content %}
+<div class="admin-form-wrapper">
+    <form method="POST" class="admin-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label for="site_name">Nom de l'école</label>
+            <input type="text" name="site_name" id="site_name" class="form-control" value="{{ settings.get('site_name', '') }}">
+        </div>
+        <div class="form-group">
+            <label for="site_description">Description du site</label>
+            <textarea name="site_description" id="site_description" class="form-control" rows="3">{{ settings.get('site_description', '') }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="about_text">Texte "À propos"</label>
+            <textarea name="about_text" id="about_text" class="form-control" rows="5">{{ settings.get('about_text', '') }}</textarea>
+        </div>
+        <h3 class="form-section-title">Coordonnées</h3>
+        <div class="form-group">
+            <label for="contact_email">Email de contact</label>
+            <input type="email" name="contact_email" id="contact_email" class="form-control" value="{{ settings.get('contact_email', '') }}">
+        </div>
+        <div class="form-group">
+            <label for="contact_phone">Téléphone</label>
+            <input type="text" name="contact_phone" id="contact_phone" class="form-control" value="{{ settings.get('contact_phone', '') }}">
+        </div>
+        <div class="form-group">
+            <label for="contact_address">Adresse</label>
+            <input type="text" name="contact_address" id="contact_address" class="form-control" value="{{ settings.get('contact_address', '') }}">
+        </div>
+        <div class="form-group">
+            <label for="school_hours">Horaires</label>
+            <input type="text" name="school_hours" id="school_hours" class="form-control" value="{{ settings.get('school_hours', '') }}">
+        </div>
+        <h3 class="form-section-title">Notifications email</h3>
+        <p style="color:var(--gray-400);font-size:0.85rem;margin-bottom:16px;">Configurez l'envoi d'emails pour que les parents reçoivent les notifications.</p>
+        <div class="form-group">
+            <label for="mail_server">Serveur SMTP</label>
+            <input type="text" name="mail_server" id="mail_server" class="form-control" value="{{ settings.get('mail_server', 'smtp.gmail.com') }}" placeholder="smtp.gmail.com">
+        </div>
+        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label for="mail_port">Port</label>
+                <input type="text" name="mail_port" id="mail_port" class="form-control" value="{{ settings.get('mail_port', '587') }}" placeholder="587">
+            </div>
+            <div class="form-group">
+                <label for="mail_sender">Email expéditeur</label>
+                <input type="email" name="mail_sender" id="mail_sender" class="form-control" value="{{ settings.get('mail_sender', '') }}" placeholder="noreply@ecole.fr">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mail_username">Identifiant SMTP</label>
+            <input type="text" name="mail_username" id="mail_username" class="form-control" value="{{ settings.get('mail_username', '') }}" placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+            <label for="mail_password">Mot de passe SMTP</label>
+            <input type="password" name="mail_password" id="mail_password" class="form-control" value="{{ settings.get('mail_password', '') }}" placeholder="Mot de passe d'application">
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Enregistrer les paramètres
+            </button>
+        </div>
+    </form>
+</div>
+
+<h3 class="form-section-title" id="images">Images de la page d'accueil</h3>
+<div class="home-images-grid">
+    {% set image_labels = {'hero_image': 'Image hero (grande)', 'about_image': 'Image "À propos"', 'gallery_1': 'Galerie 1 - École', 'gallery_2': 'Galerie 2 - Classe', 'gallery_3': 'Galerie 3 - Bibliothèque', 'gallery_4': 'Galerie 4 - Sport', 'gallery_5': 'Galerie 5 - Sortie', 'gallery_6': 'Galerie 6 - Salle de classe'} %}
+    {% for k in ['hero_image', 'about_image', 'gallery_1', 'gallery_2', 'gallery_3', 'gallery_4', 'gallery_5', 'gallery_6'] %}
+        <div class="home-image-card">
+            <img src="{{ home_images.get(k, '') }}" alt="{{ image_labels[k] }}">
+            <div class="home-image-info">
+                <strong>{{ image_labels[k] }}</strong>
+                <form method="POST" action="{{ url_for('admin_upload_home_image') }}" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="key" value="{{ k }}">
+                    <input type="file" name="image" accept="image/*" required class="form-control" style="font-size:0.82rem;padding:8px;">
+                    <button type="submit" class="btn btn-sm btn-primary" style="margin-top:8px;"><i class="fas fa-upload"></i> Changer l'image</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+.home-images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 16px; }
+.home-image-card { background: white; border-radius: 16px; border: 1px solid var(--gray-100); overflow: hidden; }
+.home-image-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+.home-image-info { padding: 14px; }
+.home-image-info strong { display: block; font-size: 0.85rem; margin-bottom: 8px; color: var(--gray-800); }
+</style>
+{% endblock %}

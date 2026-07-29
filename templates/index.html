@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+{% block title %}{{ site_name }} - Accueil{% endblock %}
+
+{% block hero %}
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-badge"><i class="fas fa-star"></i> {{ site_name }}</span>
+            <h1>Un environnement idéal pour <span class="highlight">apprendre</span>, <span class="highlight-blue">grandir</span> et réussir</h1>
+            <p>Bienvenue dans notre école où chaque enfant est accompagné avec bienveillance pour développer ses talents et s'épanouir pleinement.</p>
+            <div class="hero-buttons">
+                <a href="#about" class="btn btn-primary btn-lg"><i class="fas fa-school"></i> Découvrir l'école</a>
+                <a href="{{ url_for('announcements') }}" class="btn btn-outline btn-lg"><i class="fas fa-newspaper"></i> Voir les actualités</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="hero-image-wrapper">
+                <div class="hero-image-bg"></div>
+                <img src="{{ home_images.get('hero_image', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80') }}" alt="Enfants souriants" class="hero-image-main">
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin_settings', _anchor='images') }}" class="img-edit-btn" title="Modifier cette image"><i class="fas fa-pen"></i></a>
+                {% endif %}
+                <i class="fas fa-star hero-doodle"></i>
+                <i class="fas fa-lightbulb hero-doodle"></i>
+                <i class="fas fa-pencil-alt hero-doodle"></i>
+                <i class="fas fa-book-open hero-doodle"></i>
+                <i class="fas fa-rocket hero-doodle"></i>
+                <i class="fas fa-crown hero-doodle"></i>
+                <i class="fas fa-sun hero-doodle"></i>
+                <i class="fas fa-heart hero-doodle"></i>
+                <i class="fas fa-cloud hero-doodle"></i>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<!-- About Section -->
+<section class="section" id="about">
+    <div class="container">
+        <div class="about-grid reveal">
+            <div class="about-image">
+                <div class="about-image-bg"></div>
+                <img src="{{ home_images.get('about_image', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80') }}" alt="Élève souriant" class="about-image-main">
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin_settings', _anchor='images') }}" class="img-edit-btn" title="Modifier cette image"><i class="fas fa-pen"></i></a>
+                {% endif %}
+                <div class="about-badge">
+                    <span>30+</span>
+                    <small>Ans d'expérience</small>
+                </div>
+            </div>
+            <div class="about-content">
+                <span class="section-badge"><i class="fas fa-info-circle"></i> À propos</span>
+                <h2>Une école sûre, moderne et tournée vers la réussite</h2>
+                <p>Depuis plus de 30 ans, notre école primaire accueille les enfants dans un environnement chaleureux et sécurisé, où chacun peut développer pleinement son potentiel.</p>
+                <div class="about-features">
+                    <div class="about-feature"><i class="fas fa-check-circle"></i> Enseignants qualifiés</div>
+                    <div class="about-feature"><i class="fas fa-check-circle"></i> Environnement sécurisé</div>
+                    <div class="about-feature"><i class="fas fa-check-circle"></i> Activités éducatives</div>
+                    <div class="about-feature"><i class="fas fa-check-circle"></i> Cantine scolaire</div>
+                    <div class="about-feature"><i class="fas fa-check-circle"></i> Bibliothèque</div>
+                    <div class="about-feature"><i class="fas fa-check-circle"></i> Espaces verts</div>
+                </div>
+                <a href="#services" class="btn btn-primary"><i class="fas fa-arrow-right"></i> En savoir plus</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="section services-section" id="services">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-badge"><i class="fas fa-cogs"></i> Nos services</span>
+            <h2>Tout pour <span class="highlight">l'épanouissement</span> de votre enfant</h2>
+            <p>Nous offrons un cadre complet pour accompagner chaque enfant dans son développement.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card reveal reveal-delay-1">
+                <div class="service-card-icon"><i class="fas fa-book-reader"></i></div>
+                <h3>Pédagogie active</h3>
+                <p>Des méthodes modernes pour éveiller la curiosité et le plaisir d'apprendre.</p>
+            </div>
+            <div class="service-card reveal reveal-delay-2">
+                <div class="service-card-icon"><i class="fas fa-paint-brush"></i></div>
+                <h3>Activités créatives</h3>
+                <p>Arts, musique, théâtre : chaque enfant trouve son mode d'expression.</p>
+            </div>
+            <div class="service-card reveal reveal-delay-3">
+                <div class="service-card-icon"><i class="fas fa-futbol"></i></div>
+                <h3>Sports et jeux</h3>
+                <p>Des activités sportives pour développer la motricité et l'esprit d'équipe.</p>
+            </div>
+            <div class="service-card reveal reveal-delay-4">
+                <div class="service-card-icon"><i class="fas fa-laptop"></i></div>
+                <h3>Numérique éducatif</h3>
+                <p>Des outils modernes pour préparer les enfants au monde de demain.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- News Section -->
+<section class="section" id="news">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-badge"><i class="fas fa-bullhorn"></i> Actualités</span>
+            <h2>Dernières <span class="highlight">nouvelles</span></h2>
+            <p>Restez informé de toute l'actualité de notre école.</p>
+        </div>
+        {% if announcements %}
+            <div class="cards-grid">
+                {% for annonce in announcements %}
+                    <a href="{{ url_for('announcement_detail', id=annonce.id) }}" class="card card-hover reveal">
+                        {% if annonce.image %}
+                            <div class="card-image">
+                                <img src="{{ url_for('static', filename=annonce.image) }}" alt="{{ annonce.title }}">
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <div class="card-meta">
+                                <span><i class="far fa-calendar-alt"></i> {{ annonce.created_at.strftime('%d/%m/%Y') }}</span>
+                            </div>
+                            <h3>{{ annonce.title }}</h3>
+                            <p>{{ annonce.summary or annonce.content|truncate(120) }}</p>
+                            <span class="card-link">Lire plus <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="section-cta">
+                <a href="{{ url_for('announcements') }}" class="btn btn-outline">Voir toutes les actualités <i class="fas fa-arrow-right"></i></a>
+            </div>
+        {% else %}
+            <div class="empty-state reveal">
+                <i class="fas fa-newspaper"></i>
+                <p>Aucune actualité pour le moment.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="section" style="background: var(--gray-50);" id="gallery">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-badge"><i class="fas fa-images"></i> Galerie</span>
+            <h2>Notre école en <span class="highlight">images</span></h2>
+            <p>Découvrez les moments forts de la vie de notre établissement.</p>
+        </div>
+        <div class="gallery-grid">
+            {% for gk in ['gallery_1', 'gallery_2', 'gallery_3', 'gallery_4', 'gallery_5', 'gallery_6'] %}
+                {% set gtitles = {'gallery_1': "Notre école", 'gallery_2': "En classe", 'gallery_3': "Bibliothèque", 'gallery_4': "Activités sportives", 'gallery_5': "Sorties scolaires", 'gallery_6': "Salle de classe"} %}
+                {% set glightbox = {'gallery_1': 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80', 'gallery_2': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80', 'gallery_3': 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&q=80', 'gallery_4': 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&q=80', 'gallery_5': 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80', 'gallery_6': 'https://images.unsplash.com/photo-1606768666853-403c90a981ad?w=800&q=80'} %}
+                {% set default_img = 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80' %}
+                {% set gtitle = gtitles[gk] %}
+                {% set glbox = glightbox[gk] %}
+                <div class="gallery-item" onclick="openLightbox('{{ glbox }}', '{{ gtitle }}')">
+                    <img src="{{ home_images.get(gk, default_img) }}" alt="{{ gtitle }}">
+                    <div class="gallery-overlay"><h3>{{ gtitle }}</h3></div>
+                    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                        <a href="{{ url_for('admin_settings', _anchor='images') }}" class="img-edit-btn" title="Modifier cette image"><i class="fas fa-pen"></i></a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item reveal">
+                <div class="stat-number" data-target="450">0</div>
+                <div class="stat-label">Élèves</div>
+            </div>
+            <div class="stat-item reveal reveal-delay-1">
+                <div class="stat-number" data-target="35">0</div>
+                <div class="stat-label">Enseignants</div>
+            </div>
+            <div class="stat-item reveal reveal-delay-2">
+                <div class="stat-number" data-target="20">0</div>
+                <div class="stat-label">Classes</div>
+            </div>
+            <div class="stat-item reveal reveal-delay-3">
+                <div class="stat-number" data-target="98">0<small style="font-size:1.5rem;">%</small></div>
+                <div class="stat-label">Réussite</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Events Section -->
+<section class="section" id="events">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-badge"><i class="fas fa-calendar-check"></i> Événements</span>
+            <h2>Prochains <span class="highlight">rendez-vous</span></h2>
+            <p>Ne manquez aucun des événements à venir dans notre école.</p>
+        </div>
+        {% if events %}
+            <div class="events-list">
+                {% for event in events %}
+                    <a href="{{ url_for('event_detail', id=event.id) }}" class="event-card reveal">
+                        <div class="event-date">
+                            <span class="event-day">{{ event.date.strftime('%d') }}</span>
+                            <span class="event-month">{{ event.date.strftime('%b') }}</span>
+                        </div>
+                        <div class="event-info">
+                            <h3>{{ event.title }}</h3>
+                            <div class="event-meta">
+                                {% if event.time %}<span><i class="far fa-clock"></i> {{ event.time }}</span>{% endif %}
+                                {% if event.location %}<span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>{% endif %}
+                            </div>
+                            <p>{{ event.description|truncate(120) }}</p>
+                        </div>
+                        <div class="event-arrow"><i class="fas fa-chevron-right"></i></div>
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="section-cta">
+                <a href="{{ url_for('events') }}" class="btn btn-outline">Voir tous les événements <i class="fas fa-arrow-right"></i></a>
+            </div>
+        {% else %}
+            <div class="empty-state reveal">
+                <i class="fas fa-calendar-alt"></i>
+                <p>Aucun événement à venir pour le moment.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="section testimonials-section" id="testimonials">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-badge"><i class="fas fa-quote-right"></i> Témoignages</span>
+            <h2>Ce que disent les <span class="highlight">parents</span></h2>
+            <p>La satisfaction de nos familles est notre plus belle récompense.</p>
+        </div>
+        {% if reviews %}
+            <div class="testimonials-grid">
+                {% for review in reviews %}
+                    <div class="testimonial-card reveal {% if loop.index > 1 %}reveal-delay-{{ loop.index0 }}{% endif %}">
+                        <div class="testimonial-stars">
+                            {% for i in range(5) %}
+                                <i class="fas fa-star{% if i >= review.rating %} text-muted{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="testimonial-text">"{{ review.comment }}"</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">{{ review.name[:1]|upper }}</div>
+                            <div>
+                                <div class="testimonial-name">{{ review.name }}</div>
+                                <div class="testimonial-role">Parent d'élève</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state reveal">
+                <i class="fas fa-comment-dots"></i>
+                <p>Soyez le premier à donner votre avis !</p>
+            </div>
+        {% endif %}
+
+        {% if current_user.is_authenticated %}
+            <div class="review-form-wrapper reveal">
+                <div class="review-form-card">
+                    <h3><i class="fas fa-pen"></i> Donnez votre avis</h3>
+                    <form method="POST" action="{{ url_for('index', _anchor='testimonials') }}">
+                        {{ review_form.hidden_tag() }}
+                        <div class="form-group">
+                            <label>Votre note</label>
+                            <div class="star-rating">
+                                {% for value, label in review_form.rating.choices %}
+                                    <input type="radio" name="rating" id="star{{ value }}" value="{{ value }}" {% if review_form.rating.data == value %}checked{% endif %}>
+                                    <label for="star{{ value }}" title="{{ label }}"><i class="fas fa-star"></i></label>
+                                {% endfor %}
+                            </div>
+                            {% if review_form.rating.errors %}
+                                {% for error in review_form.rating.errors %}
+                                    <span class="form-error">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Votre avis</label>
+                            {{ review_form.comment(class="form-control", placeholder="Partagez votre expérience avec notre école...", rows=4) }}
+                            {% if review_form.comment.errors %}
+                                {% for error in review_form.comment.errors %}
+                                    <span class="form-error">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Envoyer mon avis</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="section" id="faq">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-badge"><i class="fas fa-question-circle"></i> FAQ</span>
+            <h2>Questions <span class="highlight">fréquentes</span></h2>
+            <p>Tout ce que vous devez savoir sur notre école.</p>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item reveal">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Comment inscrire mon enfant ?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Pour inscrire votre enfant, vous pouvez nous contacter par téléphone ou par email pour prendre rendez-vous. Nous vous guiderons à travers toutes les étapes du processus d'inscription.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal reveal-delay-1">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Quels documents fournir pour l'inscription ?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Les documents nécessaires sont : le livret de famille, le carnet de santé, un justificatif de domicile et les bulletins scolaires précédents.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal reveal-delay-2">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Comment accéder aux résultats scolaires ?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Les résultats sont disponibles via l'espace parent sécurisé. Vous recevrez également un bulletin trimestriel par email.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal reveal-delay-3">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Quels sont les horaires de l'école ?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>L'école est ouverte du lundi au vendredi de 8h30 à 16h30. L'accueil est assuré dès 8h00 et la garderie jusqu'à 18h00.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" onclick="if(event.target===this)closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <div class="lightbox-content">
+        <img id="lightboxImage" src="" alt="">
+        <div id="lightboxCaption" class="lightbox-caption"></div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+{% block title %}Messages - Administration {{ site_name }}{% endblock %}
+{% block page_title %}Messages de contact{% endblock %}
+
+{% block content %}
+<div class="admin-table-wrapper">
+    {% if messages.items %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Sujet</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for msg in messages.items %}
+                    <tr class="{% if not msg.read %}unread-row{% endif %}">
+                        <td><strong>{{ msg.name }}</strong></td>
+                        <td>{{ msg.email }}</td>
+                        <td>{{ msg.subject }}</td>
+                        <td>{{ msg.message|truncate(60) }}</td>
+                        <td>{{ msg.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            {% if msg.read %}
+                                <span class="status-badge draft">Lu</span>
+                            {% else %}
+                                <span class="status-badge published">Non lu</span>
+                            {% endif %}
+                        </td>
+                        <td class="table-actions">
+                            {% if not msg.read %}
+                                <form method="POST" action="{{ url_for('admin_message_read', id=msg.id) }}" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-outline" title="Marquer comme lu"><i class="fas fa-check"></i></button>
+                                </form>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('admin_message_delete', id=msg.id) }}" style="display:inline;" onsubmit="return confirm('Supprimer ce message ?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Supprimer"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% set pagination = messages %}{% include 'admin/_pagination.html' %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-envelope-open-text"></i>
+            <p>Aucun message pour le moment.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Circulaires - {{ site_name }}{% endblock %}
+
+{% block hero %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Circulaires et documents</h1>
+        <p>Téléchargez les circulaires et documents officiels de l'école.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+{% if circulars.items %}
+    <div class="documents-grid">
+        {% for circular in circulars.items %}
+            <div class="document-card">
+                <div class="document-icon">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="document-info">
+                    <h3>{{ circular.title }}</h3>
+                    {% if circular.description %}
+                        <p>{{ circular.description|truncate(100) }}</p>
+                    {% endif %}
+                    <div class="document-meta">
+                        <span><i class="far fa-calendar-alt"></i> {{ circular.created_at.strftime('%d/%m/%Y') }}</span>
+                        {% if circular.file_size %}
+                            <span><i class="fas fa-file"></i> {{ (circular.file_size / 1024)|round(1) }} Ko</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{{ url_for('static', filename=circular.file_path) }}" class="btn btn-primary btn-sm" download>
+                    <i class="fas fa-download"></i> Télécharger
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    {% if circulars.pages > 1 %}
+        <nav class="pagination">
+            {% if circulars.has_prev %}
+                <a href="{{ url_for('circulars', page=circulars.prev_num) }}" class="page-link">
+                    <i class="fas fa-chevron-left"></i> Précédent
+                </a>
+            {% endif %}
+            <span class="page-info">Page {{ circulars.page }} sur {{ circulars.pages }}</span>
+            {% if circulars.has_next %}
+                <a href="{{ url_for('circulars', page=circulars.next_num) }}" class="page-link">
+                    Suivant <i class="fas fa-chevron-right"></i>
+                </a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="empty-state">
+        <i class="fas fa-file-alt"></i>
+        <h3>Aucun document</h3>
+        <p>Aucune circulaire n'a été publiée pour le moment.</p>
+    </div>
+{% endif %}
+{% endblock %}

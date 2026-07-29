@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Annonces - {{ site_name }}{% endblock %}
+
+{% block hero %}
+<section class="page-hero">
+    <div class="container">
+        <h1>Annonces et actualités</h1>
+        <p>Restez informé des dernières nouvelles de l'école.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+{% if annonces.items %}
+    <div class="cards-grid">
+        {% for annonce in annonces.items %}
+            <a href="{{ url_for('announcement_detail', id=annonce.id) }}" class="card card-hover">
+                {% if annonce.image %}
+                    <div class="card-image">
+                        <img src="{{ url_for('static', filename=annonce.image) }}" alt="{{ annonce.title }}">
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span><i class="far fa-calendar-alt"></i> {{ annonce.created_at.strftime('%d/%m/%Y') }}</span>
+                    </div>
+                    <h3>{{ annonce.title }}</h3>
+                    <p>{{ annonce.summary or annonce.content|truncate(150) }}</p>
+                    <span class="card-link">Lire la suite <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    {% if annonces.pages > 1 %}
+        <nav class="pagination">
+            {% if annonces.has_prev %}
+                <a href="{{ url_for('announcements', page=annonces.prev_num) }}" class="page-link">
+                    <i class="fas fa-chevron-left"></i> Précédent
+                </a>
+            {% endif %}
+            <span class="page-info">Page {{ annonces.page }} sur {{ annonces.pages }}</span>
+            {% if annonces.has_next %}
+                <a href="{{ url_for('announcements', page=annonces.next_num) }}" class="page-link">
+                    Suivant <i class="fas fa-chevron-right"></i>
+                </a>
+            {% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="empty-state">
+        <i class="fas fa-newspaper"></i>
+        <h3>Aucune annonce</h3>
+        <p>Aucune annonce n'a été publiée pour le moment. Revenez bientôt !</p>
+    </div>
+{% endif %}
+{% endblock %}

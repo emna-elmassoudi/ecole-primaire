@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ title }} - {{ site_name }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="admin-form-wrapper">
+    <form method="POST" enctype="multipart/form-data" class="admin-form">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="title">{{ form.title.label }}</label>
+            {{ form.title(class="form-control", placeholder="Titre de la circulaire") }}
+            {% if form.title.errors %}
+                {% for error in form.title.errors %}
+                    <span class="form-error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="description">{{ form.description.label }}</label>
+            {{ form.description(class="form-control", rows="4", placeholder="Description (optionnelle)") }}
+        </div>
+        <div class="form-group">
+            <label for="file">{{ form.file.label }}</label>
+            {% if circular and circular.file_path %}
+                <div class="current-file">
+                    <a href="{{ url_for('static', filename=circular.file_path) }}" target="_blank" class="file-link">
+                        <i class="fas fa-file"></i> Fichier actuel
+                    </a>
+                </div>
+            {% endif %}
+            {{ form.file(class="form-control") }}
+            {% if form.file.errors %}
+                {% for error in form.file.errors %}
+                    <span class="form-error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label class="checkbox-label">
+                {{ form.published() }} {{ form.published.label }}
+            </label>
+        </div>
+        <div class="form-actions">
+            <a href="{{ url_for('admin_circulars') }}" class="btn btn-outline">Annuler</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Enregistrer
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

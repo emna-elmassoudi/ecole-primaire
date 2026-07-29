@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 0;">
+    <table width="100%" style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 40px; margin-bottom: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <tr>
+            <td style="background: #4F46E5; padding: 32px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 1.5rem;">{{ site_name }}</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 32px;">
+                <h2 style="color: #0f172a; margin-top: 0;">{{ title }}</h2>
+                <p style="color: #475569; line-height: 1.6;">{{ message }}</p>
+                <a href="{{ link }}" style="display: inline-block; background: #4F46E5; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; margin-top: 16px;">Voir le contenu</a>
+            </td>
+        </tr>
+        <tr>
+            <td style="background: #f1f5f9; padding: 24px; text-align: center; font-size: 0.85rem; color: #64748b;">
+                <p style="margin: 0;">Cet email a été envoyé depuis {{ site_name }}</p>
+                {% if unsub_link %}<p style="margin: 8px 0 0;"><a href="{{ unsub_link }}" style="color: #EF4444;">Se désabonner</a></p>{% endif %}
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

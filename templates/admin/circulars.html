@@ -1,0 +1,65 @@
+{% extends "admin/base.html" %}
+{% block title %}Circulaires - {{ site_name }}{% endblock %}
+{% block page_title %}Gestion des circulaires{% endblock %}
+
+{% block content %}
+<div class="admin-toolbar">
+    <a href="{{ url_for('admin_circular_new') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nouvelle circulaire
+    </a>
+</div>
+<div class="admin-table-wrapper">
+    {% if circulars.items %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Fichier</th>
+                    <th>Statut</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for circular in circulars.items %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('admin_circular_edit', id=circular.id) }}" class="table-link">
+                                {{ circular.title }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('static', filename=circular.file_path) }}" target="_blank" class="file-link">
+                                <i class="fas fa-file"></i> Voir le fichier
+                            </a>
+                        </td>
+                        <td>
+                            <span class="status-badge {{ 'published' if circular.published else 'draft' }}">
+                                {{ 'Publié' if circular.published else 'Brouillon' }}
+                            </span>
+                        </td>
+                        <td>{{ circular.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td class="table-actions">
+                            <a href="{{ url_for('admin_circular_edit', id=circular.id) }}" class="btn btn-sm btn-outline" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('admin_circular_delete', id=circular.id) }}" style="display:inline" onsubmit="return confirm('Supprimer cette circulaire ?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% set pagination = circulars %}{% include 'admin/_pagination.html' %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-file-alt"></i>
+            <p>Aucune circulaire pour le moment.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

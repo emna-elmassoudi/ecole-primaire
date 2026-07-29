@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+{% block title %}Newsletter - {{ site_name }}{% endblock %}
+{% block page_title %}Abonnés newsletter{% endblock %}
+
+{% block content %}
+<div class="admin-toolbar" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <span style="color:var(--gray-400);font-weight:700;">{{ subs.total }} abonnés</span>
+    <span style="font-size:0.82rem;color:var(--gray-400);">Les visiteurs entrent leur email → reçoivent les notifications</span>
+</div>
+<div class="admin-table-wrapper">
+    {% if subs.items %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Date d'inscription</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in subs.items %}
+                    <tr>
+                        <td>{{ sub.email }}</td>
+                        <td>{{ sub.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td class="table-actions">
+                            <form method="POST" action="{{ url_for('admin_newsletter_delete', id=sub.id) }}" style="display:inline;" onsubmit="return confirm('Supprimer cet abonné ?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Supprimer"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% set pagination = subs %}{% include 'admin/_pagination.html' %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-mail-bulk"></i>
+            <p>Aucun abonné pour le moment.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

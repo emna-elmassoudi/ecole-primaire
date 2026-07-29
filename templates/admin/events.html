@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+{% block title %}Événements - {{ site_name }}{% endblock %}
+{% block page_title %}Gestion des événements{% endblock %}
+
+{% block content %}
+<div class="admin-toolbar">
+    <a href="{{ url_for('admin_event_new') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nouvel événement
+    </a>
+</div>
+<div class="admin-table-wrapper">
+    {% if events.items %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events.items %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('admin_event_edit', id=event.id) }}" class="table-link">
+                                {{ event.title }}
+                            </a>
+                        </td>
+                        <td>{{ event.date.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <span class="status-badge {{ 'published' if event.published else 'draft' }}">
+                                {{ 'Publié' if event.published else 'Brouillon' }}
+                            </span>
+                        </td>
+                        <td class="table-actions">
+                            <a href="{{ url_for('admin_event_edit', id=event.id) }}" class="btn btn-sm btn-outline" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('admin_event_delete', id=event.id) }}" style="display:inline" onsubmit="return confirm('Supprimer cet événement ?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% set pagination = events %}{% include 'admin/_pagination.html' %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-calendar-alt"></i>
+            <p>Aucun événement pour le moment.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
