@@ -6,7 +6,8 @@ load_dotenv()
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-    _database_url = os.getenv('DATABASE_URL', 'sqlite:///school.db')
+    _base_dir = os.path.dirname(os.path.abspath(__file__))
+    _database_url = os.getenv('DATABASE_URL', f'sqlite:///{os.path.join(_base_dir, "instance", "school.db")}')
     if _database_url and _database_url.startswith('postgres://'):
         _database_url = _database_url.replace('postgres://', 'postgresql://', 1)
     SQLALCHEMY_DATABASE_URI = _database_url

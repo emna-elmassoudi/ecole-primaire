@@ -55,10 +55,6 @@ GALLERY_LIGHTBOX = {
 }
 app.permanent_session_lifetime = timedelta(minutes=30)
 login_manager = LoginManager(app)
-
-@app.before_request
-def cleanup_session():
-    db.session.rollback()
 login_manager.login_view = 'login'
 login_manager.login_message = 'Veuillez vous connecter pour accéder à cette page.'
 
@@ -140,8 +136,12 @@ def notify_subscribers(message, link=None, type='info', subject=None):
         send_email_notification(sub.email, subject or f'Nouveau - {site_name}', message, full_link, site_name, unsub_link)
 
 def get_setting(key, default=''):
-    setting = SiteSetting.query.filter_by(key=key).first()
-    return setting.value if setting and setting.value is not None else default
+    try:
+        setting = SiteSetting.query.filter_by(key=key).first()
+        return setting.value if setting and setting.value is not None else default
+    except Exception:
+        db.session.rollback()
+        return default
 
 MONTHS_FR = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
 
